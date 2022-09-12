@@ -1,0 +1,41 @@
+﻿@using TXTextControl.Web.MVC.DocumentViewer
+
+<div style="width: 1200px; height: 800px">
+
+	@Html.TXTextControl().DocumentViewer(settings => {
+		settings.DocumentPath = "App_Data/template.docx";
+		settings.Dock = DocumentViewerSettings.DockStyle.Fill;
+		settings.ShowThumbnailPane = false;
+		settings.SignatureSettings = new SignatureSettings() {
+			ShowSignatureBar = true,
+			OwnerName = "Paul Paulsen",
+			SignerName = "Tim Typer",
+			SignerInitials = "TT",
+			RedirectUrlAfterSignature = this.Url.Action("SignDocument", "Home", null, Context.Request.Scheme, null),
+			SignatureBoxes = new SignatureBox[] { 
+				new SignatureBox("txsign") { 
+				SigningRequired = true, Style = SignatureBox.SignatureBoxStyle.Signature }
+		}};
+	}).Render()
+
+</div>
+
+@section Scripts {
+
+<script>
+
+window.addEventListener("documentViewerLoaded", function () {
+	TXDocumentViewer.signatures.setSubmitCallback(signatureComplete);
+});
+
+function signatureComplete(e) {
+    var element = document.createElement('a');
+    element.setAttribute('href','data:application/pdf;;base64,' + e);
+    element.setAttribute('download', "results.pdf");
+    document.body.appendChild(element);
+    element.click();
+}
+
+</script>
+
+}
